@@ -1,0 +1,7 @@
+
+# to get channel id using video url:
+https://www.googleapis.com/youtube/v3/videos?part=snippet&id=eWTvG95sj3E
+
+
+# site to check for you tube api calls
+https://commentpicker.com/youtube-channel-id.php
