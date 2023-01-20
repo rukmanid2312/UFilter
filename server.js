@@ -14,11 +14,29 @@ const getChnanelID=async (videolink)=>{
     const videoId=vurl.split('?')[1].split('=')[1];
     let url= `${baseUrl}videos?key=${api_key}&part=snippet&id=${videoId}`;
     let response=await axios.get(url);
+    
     let channelID=response.data.items[0].snippet.channelId;
     console.log(channelID);
     return channelID;
 
 }
+app.get('/loadmore',async(req,res,next)=>{
+    let token=req.query.pageToken;
+    let channel_id=await getChnanelID(req.query.vrl);
+    let fromdate=new Date(req.query.fromdate).toISOString();
+    let todate=new Date(req.query.todate).toISOString();
+    let url=`${baseUrl}search?key=${api_key}&part=snippet&type=video&channelId=${channel_id}&publishedAfter=${fromdate}&publishedBefore=${todate}&pageToken=${token}`;
+    try{
+        let response=await axios.get(url);
+        console.log(response.data);
+       res.send({videos:response.data.items,pageToken:response.data.nextPageToken});
+
+    }
+    catch(err){
+        next(err);
+    }
+
+});
 app.get('/search',async (req,res,next)=>{
 
     console.log(req.query);
@@ -31,8 +49,8 @@ app.get('/search',async (req,res,next)=>{
     let url=`${baseUrl}search?key=${api_key}&part=snippet&type=video&channelId=${channel_id}&publishedAfter=${fromdate}&publishedBefore=${todate}`;
     try{
         let response=await axios.get(url);
-        console.log(response.data.items[0].snippet.thumbnails);
-       res.send({videos:response.data.items});
+        console.log(response.data);
+       res.send({videos:response.data.items,pageToken:response.data.nextPageToken});
 
     }
     catch(err){
